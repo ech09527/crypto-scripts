@@ -21,22 +21,24 @@ python3 -m app.main
 
 服务监听 `0.0.0.0:8000`（可远程访问）。本机打开 http://127.0.0.1:8000 ，局域网用 `http://<服务器IP>:8000`。
 
-## Docker
+## Docker Compose
 
 ```bash
-# 构建
-docker build -t pm-leverage:latest .
-
-# 运行（挂载配置与数据；宿主机代理用 host.docker.internal）
-docker run -d --name pm-leverage --restart unless-stopped \
-  -p 8000:8000 \
-  -v "$(pwd)/config.json:/app/config.json:ro" \
-  -v "$(pwd)/data:/app/data" \
-  --add-host=host.docker.internal:host-gateway \
-  pm-leverage:latest
+cp config.example.json config.json   # 填入 API Key；代理可用 host.docker.internal:7890
+docker compose pull
+docker compose up -d
 ```
 
-容器内代理可把 `binance.proxy` 设为 `http://host.docker.internal:7890`。
+访问：http://\<服务器IP\>:8000
+
+```yaml
+# docker-compose.yml 要点
+# image: ghcr.io/ech09527/pm-leverage:latest
+# ports: 8000:8000
+# volumes: ./config.json, ./data
+```
+
+本地构建可把 `image` 换成 `build: .`。
 
 ## 配置
 

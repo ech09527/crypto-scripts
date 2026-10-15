@@ -1,0 +1,16 @@
+services:
+  pm-leverage:
+    image: ghcr.io/ech09527/pm-leverage:latest
+    # 本地改代码时可改为：
+    # build: .
+    container_name: pm-leverage
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      TZ: Asia/Shanghai
