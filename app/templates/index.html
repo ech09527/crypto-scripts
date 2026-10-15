@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>统一账户杠杆监控</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div>
+        <h1 class="brand">统一账户杠杆</h1>
+        <p class="sub">名义杠杆 = Σ|持仓名义价值| / 总权益 · 本地 SQLite 存档</p>
+      </div>
+      <div class="meta">
+        <div>采集间隔 <strong>{{ interval_minutes }}</strong> 分钟</div>
+        <div>上次采集 <strong id="last-run">{{ last_run or "—" }}</strong></div>
+        {% if last_error %}
+        <div class="err" id="last-error">{{ last_error }}</div>
+        {% else %}
+        <div class="err" id="last-error" hidden></div>
+        {% endif %}
+        <div class="actions">
+          <button type="button" id="btn-refresh">立即采集</button>
+          <button type="button" id="btn-reload" class="btn">刷新页面数据</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="cards" id="summary-cards">
+      {% if latest %}
+        {% set s = latest[0] %}
+        <article class="card">
+          <div class="k">账户</div>
+          <div class="v">{{ s.label }}</div>
+          <div class="hint">{{ s.account_type or "PM" }} · {{ s.account_status or "" }}</div>
+        </article>
+        <article class="card">
+          <div class="k">账户杠杆</div>
+          <div class="v accent" id="v-leverage">{{ "%.4f"|format(s.leverage) }}x</div>
+          <div class="hint">名义 / 权益</div>
+        </article>
+        <article class="card">
+          <div class="k">总权益</div>
+          <div class="v" id="v-equity">{{ "%.2f"|format(s.equity) }}</div>
+          <div class="hint">USDT</div>
+        </article>
+        <article class="card">
+          <div class="k">名义价值</div>
+          <div class="v" id="v-notional">{{ "%.2f"|format(s.gross_notional) }}</div>
+          <div class="hint">仓位 {{ s.position_count }} · 浮盈 <span id="v-upnl">{{ "%.2f"|format(s.upnl) }}</span></div>
+        </article>
+      {% else %}
+        <article class="card"><div class="empty">暂无数据，请点击「立即采集」</div></article>
+      {% endif %}
+    </section>
+
+    <section class="panel">
+      <div class="panel-h">
+        <h2>杠杆走势</h2>
+        <div>
+          <label>
+            账户
+            <select id="label-select">
+              {% for lb in labels %}
+              <option value="{{ lb }}">{{ lb }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="chart-box">
+        <canvas id="lev-chart"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-h">
+        <h2>历史快照</h2>
+      </div>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>账户</th>
+              <th>杠杆</th>
+              <th>权益</th>
+              <th>名义合计</th>
+              <th>多仓</th>
+              <th>空仓</th>
+              <th>浮盈</th>
+              <th>仓位</th>
+              <th>uniMMR</th>
+              <th>可用</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr><td colspan="11" class="empty">加载中…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

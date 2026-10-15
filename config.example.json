@@ -1,0 +1,18 @@
+{
+  "accounts": [
+    {
+      "label": "gy01",
+      "api_key": "YOUR_BINANCE_API_KEY",
+      "api_secret": "YOUR_BINANCE_API_SECRET"
+    }
+  ],
+  "binance": {
+    "proxy": "http://127.0.0.1:7890",
+    "recv_window": 60000
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "interval_minutes": 5
+  }
+}

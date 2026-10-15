@@ -1,0 +1,14 @@
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.git
+.gitignore
+data
+*.db
+config.json
+pm_leverage_sync.py
+README.md
+agent-tools
+.cursor
+**/.DS_Store
