@@ -2,6 +2,10 @@
 
 本地定时采集币安 Portfolio Margin 账户名义杠杆，写入 SQLite，并通过网页查看。
 
+仓库：https://github.com/ech09527/crypto-scripts  
+
+镜像（GHCR，由 Actions 构建）：`ghcr.io/ech09527/pm-leverage:latest`
+
 **杠杆口径**：`账户杠杆 = Σ|持仓名义价值| / 统一账户总权益`
 
 ## 启动
